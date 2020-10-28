@@ -54,7 +54,7 @@ module JsonPrIssueBase
     body['query'] = query
     data = nil
     Net::HTTP.start('api.github.com', 443, use_ssl: true) do |http|
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER 
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
       req = Net::HTTP::Post.new '/graphql'
       req['Authorization'] = "Bearer #{TKN}"
       req['Accept'] = 'application/json'
