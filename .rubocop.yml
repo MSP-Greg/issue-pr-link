@@ -1,0 +1,85 @@
+AllCops:
+  DisabledByDefault: true
+  TargetRubyVersion: 2.5
+  DisplayCopNames: true
+  StyleGuideCopsOnly: false
+
+Layout/EndOfLine:
+  Enabled: true
+  EnforcedStyle: lf
+
+Layout/SpaceAfterColon:
+  Enabled: true
+
+Layout/SpaceAroundKeyword:
+  Enabled: true
+
+Layout/SpaceBeforeBlockBraces:
+  EnforcedStyleForEmptyBraces: no_space
+  Enabled: true
+
+Layout/SpaceBeforeFirstArg:
+  Enabled: true
+
+Layout/SpaceInsideParens:
+  Enabled: true
+
+Layout/Tab:
+  Enabled: true
+
+Layout/TrailingBlankLines:
+  Enabled: true
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Lint/Debugger:
+  Enabled: true
+
+Naming/MethodName:
+  Enabled: true
+  EnforcedStyle: snake_case
+  Exclude:
+    - 'test/**/**'
+
+Naming/VariableName:
+  Enabled: true
+
+Style/HashSyntax:
+  Enabled: true
+
+Style/MethodDefParentheses:
+  Enabled: true
+
+Style/TrailingCommaInArguments:
+  Enabled: true
+
+Style/WhileUntilDo:
+  Enabled: true
+
+Performance:
+  Enabled: true
+
+Metrics/ParameterLists:
+  Max: 7
+
+Performance/RedundantMatch:
+  Enabled: true
+
+Performance/RedundantBlockCall:
+  Enabled: true
+
+Performance/StringReplacement:
+  Enabled: true
+
+Performance/UnfreezeString:
+  Enabled: false
+
+Layout/AccessModifierIndentation:
+  EnforcedStyle: indent
+
+Style/WhileUntilModifier:
+  Enabled: true
+
+Style/TernaryParentheses:
+  Enabled: true
