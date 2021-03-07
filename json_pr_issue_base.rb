@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # code by MSP-Greg
-# file is included in json_pr_issue_all.rb and json_history_update.rb
+# file is included all scripts in the repo
 
 require 'json'
 require 'net/http'
@@ -21,6 +21,7 @@ module JsonPrIssueBase
   REPO    = cred['repo']
   HISTORY = cred['history']
   TKN     = cred['token']
+  LABELS  = cred['labels']
   ROWS    = 100               # gql_request query, limit of 100
 
   if !File.exist? HISTORY
@@ -55,14 +56,8 @@ module JsonPrIssueBase
     data = nil
     Net::HTTP.start('api.github.com', 443, use_ssl: true) do |http|
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      req = Net::HTTP::Post.new '/graphql'
-      req['Authorization'] = "Bearer #{TKN}"
-      req['Accept'] = 'application/json'
-      req['Content-Type'] = 'application/json'
-      req.body = JSON.generate body
-      resp = http.request req
-      if Net::HTTPSuccess === resp
-        data = JSON.parse resp.body, symbolize_names: true
+      data = run_request http, query
+      if data
         if filename
           File.write "#{__dir__}/#{filename}", resp.body, mode: 'wb:UTF-8'
         end
@@ -73,6 +68,31 @@ module JsonPrIssueBase
     data
   end
 
+  # open a connection and pass to block
+  def http_connection
+    Net::HTTP.start('api.github.com', 443, use_ssl: true) do |http|
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      yield http
+    end
+  end
+
+  def run_request(http, query)
+    body = {}
+    body['query'] = query
+
+    req = Net::HTTP::Post.new '/graphql'
+    req['Authorization'] = "Bearer #{TKN}"
+    req['Accept'] = 'application/json'
+    req['Content-Type'] = 'application/json'
+    req.body = JSON.generate body
+    resp = http.request req
+    if Net::HTTPSuccess === resp
+      JSON.parse resp.body, symbolize_names: true
+    else
+      nil
+    end
+  end
+
   # prints debug info if the GitHub API finds and error
   def print_error(data, gql)
     puts 'Error retrieving GraphQL data'
@@ -81,7 +101,7 @@ module JsonPrIssueBase
     exit
   end
 
-  # returns the gql_request query string
+  # returns the gql_request query string for issues or PR's
   def gql_query_str(obj, filter)
     <<~GRAPHQL
       query {

@@ -2,5 +2,6 @@
   "owner": "puma",
   "repo": "puma",
   "history": "History.md",
+  "labels": [ ["bug", "Bugfixes"], ["feature", "Features"], ["refactor", "Refactor"] ],
   "token": "<your GitHub token (40 characters)>"
 }

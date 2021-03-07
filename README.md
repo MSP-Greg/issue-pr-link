@@ -17,7 +17,6 @@ and add the link info at the bottom of the document.
 
 The code uses the GitHub GraphQL API to retrieve the pr/issue data, and stores it in a JSON file located in this repo.  The files are named 'data_\<repo\>.json' and are excluded with .gitignore.
 
-
 ### Create a GitHub 'Personal access tokens' & JSON info file
 
 Using the GitHub GraphQL API requires a 'token', so you may need to create one for access.  To create one, go to your account page, follow 'Settings / Developer settings / Personal access tokens', then click 'Generate new token'.  I believe allowing only 'public_repo' is enough to use the API and retrieve data.  Save the 40 character token.
@@ -26,7 +25,9 @@ There is a json sample file in the repo named `info.sample`.  Copy (rename as ne
 
 ### Running the code
 
-There are two Ruby scripts used to download the data and update your file.  Both scripts take the path to your json info file as a parameter.
+There are three Ruby scripts.  All thre should be run from the One will output the text for a new release to be used in History.md, and the other two are used to download the data and update your History/ChangeLog file.  All scripts take the path to your json info file as a first parameter.
+
+**`history_new_release.rb`** - this file outputs suggested text for a new release, and also lists commits not added to the text.  The json info file should be the first parameter, and the last release tag should be the second parameter.  The code reads the `labels` array in the json info file, and uses it to filter the commits/PR's into categories in the release text.  It also has a limit of 100 commits between releases.
 
 **`json_pr_issue_all.rb`** - this file needs to be run first. It downloads all the data for every PR and issue for your repo.  This may need to be run if your data gets too out of date.
 
