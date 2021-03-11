@@ -30,7 +30,7 @@ module HistoryNewRelease
         end
         entries.each do |e|
           next if (pr = e.dig :associatedPullRequests, :nodes).empty?
-          closes = pr.first[:bodyText][/closes? (#\d+)/i, 1]
+          closes = pr.first[:bodyText][/(?:closes?|fixes) (#\d+)/i, 1]
           item = "  * #{e[:message][/.+/]}".dup
           if closes
             item.sub!(/\)\z/, ", #{closes})")
