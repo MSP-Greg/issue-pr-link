@@ -74,6 +74,7 @@ module HistoryNewRelease
         hsh = run_request http, gql_query_commits_since(date)
       end
       data = hsh.dig :data, :repository, :ref, :target, :history, :nodes
+
       data.each do |d|
         prs = d.dig(:associatedPullRequests, :nodes)
         prs.each do |pr|
