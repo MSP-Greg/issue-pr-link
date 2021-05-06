@@ -29,6 +29,8 @@ There are three Ruby scripts.  All thre should be run from the One will output t
 
 **`history_new_release.rb`** - this file outputs suggested text for a new release, and also lists commits not added to the text.  The json info file should be the first parameter, and the last release tag should be the second parameter.  The code reads the `labels` array in the json info file, and uses it to filter the commits/PR's into categories in the release text.  It also has a limit of 100 commits between releases.
 
+The `labels` array is an array of arrays.  The inner arrays have two elements, the first is the label string from the PR, the second is the text used for the 'history' group header.
+
 **`json_pr_issue_all.rb`** - this file needs to be run first. It downloads all the data for every PR and issue for your repo.  This may need to be run if your data gets too out of date.
 
 **`json_history_update.rb`** - this is the file that updates the history/changelog links.  First, it downloads the most recent 100 closed and open PR's and issues (four sets of 100), and adds/updates them to the locally stored data. It then opens the history/changelog file, parses it, and regenerates all of the link info at the bottom.
