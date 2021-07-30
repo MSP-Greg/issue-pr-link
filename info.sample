@@ -2,6 +2,6 @@
   "owner": "puma",
   "repo": "puma",
   "history": "History.md",
-  "labels": [ ["feature", "Features"], ["bug", "Bugfixes"], ["feature", "Features"], ["perf", "Performance"], ["refactor", "Refactor"] ],
+  "labels": [ ["security", "Security"], ["feature", "Features"], ["bug", "Bugfixes"], ["feature", "Features"], ["perf", "Performance"], ["refactor", "Refactor"] ],
   "token": "<your GitHub token (40 characters)>"
 }
