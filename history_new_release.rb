@@ -43,12 +43,11 @@ module HistoryNewRelease
 
       lbls = LABELS.map(&:first)
       bad_entries = data.select do |hsh|
-        hsh.dig(:associatedPullRequests, :nodes).select { |pr|
-          pr[:labels] & lbls
-        }.empty?
+        !hsh.dig(:associatedPullRequests, :nodes)[0].is_a?(Hash) ||
+        (hsh.dig(:associatedPullRequests, :nodes)[0][:labels] & lbls).empty?
       end
       unless bad_entries.empty?
-        puts "\n─────────────────────────────────────── Commits without labels?"
+        puts "\n─────────────────────────────────────── Merged PR's without labels?"
         bad_entries.each do |bad|
           puts bad[:message][/.+/]
         end
