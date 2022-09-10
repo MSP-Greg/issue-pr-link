@@ -28,6 +28,8 @@ module HistoryNewRelease
             pr[:labels].include? label
           }.empty?
         end
+        # only list PR's in the first category/label group they match
+        data = data - entries
         entries.each do |e|
           next if (pr = e.dig :associatedPullRequests, :nodes).empty?
           closes = pr.first[:bodyText][/(?:closes?|fixes) (#\d+)/i, 1]

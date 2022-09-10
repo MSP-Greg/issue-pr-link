@@ -25,7 +25,7 @@ module JsonPrIssueBase
   ROWS    = 100               # gql_request query, limit of 100
 
   if !File.exist? HISTORY
-    puts 'History filename in json file doesn\'t exist!'
+    puts 'History filename '#{HISTORY}' in json file doesn\'t exist!'
     exit
   elsif TKN.length != 40
     puts 'token must be 40 characters!'
