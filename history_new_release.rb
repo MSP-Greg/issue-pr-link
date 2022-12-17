@@ -9,16 +9,23 @@
 require_relative 'json_pr_issue_base'
 
 module HistoryNewRelease
+  YELLOW = "\e[93m"
+  RED    = "\e[91m"
+  GREEN  = "\e[92m"
+  RESET  = "\e[0m"
+
   class << self
     include JsonPrIssueBase
 
     def run
-      data = pr_commit_data_from_tag(ARGV[1])
-      process_data data
+      data, date = pr_commit_data_from_tag(ARGV[1])
+      process_data data, date
     end
 
-    def process_data(data)
-      str = "## major.minor.patch / yyyy-mm-dd\n\n".dup
+    def process_data(data, date)
+      str = +"\nCommits/PR's after tag #{ARGV[1]}, dated #{date}:\n\n" \
+            "## major.minor.patch / yyyy-mm-dd\n\n"
+
       LABELS.each do |t|
         str_label = ''.dup
         label = t.first
@@ -45,18 +52,48 @@ module HistoryNewRelease
 
       lbls = LABELS.map(&:first)
       bad_entries = data.select do |hsh|
+        hsh.dig(:associatedPullRequests, :nodes).empty? ||
         !hsh.dig(:associatedPullRequests, :nodes)[0].is_a?(Hash) ||
         (hsh.dig(:associatedPullRequests, :nodes)[0][:labels] & lbls).empty?
       end
+
       unless bad_entries.empty?
-        puts "\n─────────────────────────────────────── Merged PR's without labels?"
+        puts "\n─────────────────────────────────────── Merged Commits/PR's not included in History"
+
+        # remove 'waiting' labels
         bad_entries.each do |bad|
-          puts bad[:message][/.+/]
+          nodes = bad.dig(:associatedPullRequests, :nodes)
+          unless nodes.empty?
+            nodes[0][:labels].reject! { |l| l.start_with? 'waiting' }
+          end
         end
+
+        # groups by label/type
+        bad_by_type = bad_entries.group_by do |bad|
+          nodes = bad.dig(:associatedPullRequests, :nodes)
+          if nodes.empty?
+            "#{YELLOW}Commit, No PR?#{RESET}"
+          elsif nodes[0][:labels].empty?
+            "#{YELLOW}No Labels#{RESET}"
+          else
+            "#{GREEN}\"#{nodes[0][:labels].join "\"  \""}\"#{RESET}"
+          end
+        end.sort
+
+        str = +''
+        bad_by_type.each do |label, commits|
+          str << "#{label}\n"
+          commits.each do |commit|
+            str << "  #{commit[:committedDate][0,10]} #{commit[:message][/.+/]}\n"
+          end
+          str << "\n"
+        end
+        puts str
       end
     end
 
     def pr_commit_data_from_tag(tag)
+      date = nil
       str = <<~GRAPHQL
         query {
           repository(owner: "#{OWNER}", name: "#{REPO}") {
@@ -71,7 +108,8 @@ module HistoryNewRelease
       GRAPHQL
       hsh = nil
       http_connection do |http|
-        date = run_request(http, str).dig :data, :repository, :object, :pushedDate
+        data_all = run_request(http, str)
+        date = data_all.dig :data, :repository, :object, :pushedDate
         hsh = run_request http, gql_query_commits_since(date)
       end
       data = hsh.dig :data, :repository, :ref, :target, :history, :nodes
@@ -84,7 +122,7 @@ module HistoryNewRelease
           pr[:labels] = temp
         end
       end
-      data
+      [data, date]
     end
 
     def gql_query_commits_since(date)
