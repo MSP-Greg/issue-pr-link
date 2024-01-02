@@ -27,8 +27,8 @@ module JsonPrIssueBase
   if !File.exist? HISTORY
     puts 'History filename '#{HISTORY}' in json file doesn\'t exist!'
     exit
-  elsif TKN.length != 40
-    puts 'token must be 40 characters!'
+  elsif TKN.length < 40
+    puts 'token must be 40 characters or more!'
     exit
   elsif !(OWNER.is_a?(::String) && REPO.is_a?(::String) && !OWNER.empty? && !REPO.empty?)
     puts 'owner and repo must be non-empty strings!'
