@@ -109,7 +109,7 @@ module HistoryNewRelease
       hsh = nil
       http_connection do |http|
         data_all = run_request(http, str)
-        date = data_all.dig :data, :repository, :object, :pushedDate
+        date = data_all.dig :data, :repository, :object, :committedDate
         hsh = run_request http, gql_query_commits_since(date)
       end
       data = hsh.dig :data, :repository, :ref, :target, :history, :nodes
